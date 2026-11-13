@@ -1,11 +1,12 @@
 # ML practice: drills + segmentation project
 
-Two tracks that build the same skills:
+Three tracks that build the same skills:
 
 - **`seg/`**: the project track. Build a segmentation pipeline stage by stage, ending with a U-Net trained on Oxford-IIIT Pet.
 - **`drills/`**: the interview track. Classic "implement it from scratch" questions, done against a timer.
+- **`numpy_drills/`**: the indexing warm-up. 25 short exercises on slicing, views, masks, fancy indexing, scatter, sliding windows and patches, ordered from easy to hard.
 
-Every function is a stub with a docstring giving the shapes, the spec and sometimes a hint. Tests check your code against NumPy, PyTorch, scikit-learn or torchvision references. **No solutions are included.** If you're stuck, ask for a *hint*, not the code.
+Every function is a stub with a docstring giving the shapes, the spec and sometimes a hint. Tests check your code against NumPy, SciPy, PyTorch, scikit-learn or torchvision references. **No solutions are included.** If you're stuck, ask for a *hint*, not the code.
 
 ## Setup
 
@@ -24,7 +25,7 @@ Or activate the environment once with `source .venv/bin/activate`, and then drop
 
 Without uv: `python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt pytest`.
 
-All 103 tests fail at the start (`NotImplementedError: TODO`), and that's expected.
+All 289 tests fail at the start (`NotImplementedError: TODO`), and that's expected.
 
 ## Project track: one stage per day
 
@@ -69,6 +70,50 @@ Rules: set a **timer**, use **no internet and no autocomplete**, and **talk out 
 
 Suggested order alongside the project: 01, 11 (Day 1); 02, 07 (Day 2); 03, 04 (Day 3); 05, 06 (Day 4); 10 (Day 5); 08 (Day 6); 09, 12 (Day 7). Then 13 and 14, and after that start redoing whatever you logged.
 
+## Indexing track: `numpy_drills/`
+
+Short NumPy exercises, from easy to hard. Most answers are one to three lines; the work is picking the right indexing tool. The drill rules apply (timer, no internet, no autocomplete), plus two that the tests enforce:
+
+- **No Python loops.** Every test file ends with `test_no_python_loops`, which reads your function's source and fails on `for`, `while`, comprehensions and disguised loops such as `np.vectorize`. Some drills also ban the one function that would make the exercise trivial (`np.flip` in 03, `np.bincount` in 18, `sliding_window_view` in 23, ...).
+- **Views when asked.** Wherever a docstring says "view", the test checks `np.shares_memory`.
+
+```bash
+uv run pytest tests/numpy_drills -q                         # all 186 tests
+uv run pytest tests/numpy_drills/test_n05_view_quiz.py -q   # one drill
+```
+
+Drill 05 has no code: replace each `None` with a True/False prediction for 40 expressions, then let the tests tell you which ones you got wrong.
+
+| # | Drill | Covers | Target | Done | Redo |
+|---|---|---|---|---|---|
+| 01 | 1D slicing | `x[-k:]` and `x[k:-k]` when k = 0, negative steps | 5 min | | |
+| 02 | 2D slicing | int vs slice (keepdims), corners via steps, tiles | 5 min | | |
+| 03 | steps and slice assignment | flips, downsampling, interleave, checkerboard | 8 min | | |
+| 04 | Ellipsis | any number of leading axes, centre crop | 6 min | | |
+| 05 | view or copy? (quiz) | `shares_memory`, and whether a write reaches x | 8 min | | |
+| 06 | views, copies, in-place | `x = x / s` vs `x /= s`, functions that return None | 8 min | | |
+| 07 | boolean masks | combining conditions, masked copies, ignore_index mean | 8 min | | |
+| 08 | masks along one axis | drop NaN rows, select columns, NaN fill without warnings | 10 min | | |
+| 09 | masks to positions | `nonzero` / `argwhere`, first/last True per row, bbox | 10 min | | |
+| 10 | None and broadcasting | outer product, per-row/per-channel ops, causal mask, pairwise diffs | 8 min | | |
+| 11 | integer-array indexing | joint shuffle, one-hot, palette lookup, inverse permutation | 8 min | | |
+| 12 | paired indices `x[rows, cols]` | per-row pick/set, pixel gather, row swap | 10 min | | |
+| 13 | sub-grids with `np.ix_` | submatrix, subgraph, boolean grids | 10 min | | |
+| 14 | slices mixed with index arrays | where the broadcast axis ends up | 12 min | | |
+| 15 | `take_along_axis` | sort by keys, value at argmax, per-pixel target logits | 10 min | | |
+| 16 | broadcast masks, ragged data | sequence mask, pad/unpad, radial distance | 12 min | | |
+| 17 | per-row top-k | `argpartition`, top-k mask, top-k accuracy | 12 min | | |
+| 18 | `np.add.at` scatter | why `out[idx] += 1` loses counts; bincount, segment mean | 10 min | | |
+| 19 | scatter in 2D | heatmap splat, embedding gradient, scatter-max | 12 min | | |
+| 20 | sliding windows (1D) | index arithmetic vs `sliding_window_view`, frames, local maxima | 10 min | | |
+| 21 | resampling | nearest resize with index grids, bilinear sampling | 15 min | | |
+| 22 | non-overlapping patches | reshape + transpose: average pooling, patchify, ViT tokens | 15 min | | |
+| 23 | `as_strided` by hand | 1D/2D windows on non-contiguous input | 15 min | | |
+| 24 | overlapping patches (im2col) | `unfold` with stride and padding, patches around points | 20 min | | |
+| 25 | putting patches back | `fold` with `np.add.at`, max-pool indices, unpooling | 25 min | | |
+
+Do two or three a day as a warm-up before a drill. 20, 22 and 24 are good preparation for drill 10 (conv2d), and 10 and 16 for drill 13 (attention).
+
 ## When you're stuck (in this order)
 
 1. Re-read the docstring and the failing test. The test shows the exact expected behaviour.
@@ -83,4 +128,4 @@ Suggested order alongside the project: 01, 11 (Day 1); 02, 07 (Day 2); 03, 04 (D
 git init && git add . && git commit -m "stubs"
 ```
 
-Commit each finished stage. To redo a drill from scratch: `git show HEAD~N:drills/d08_mlp_backprop.py > /tmp/mine.py` keeps your version, and `git checkout <first-commit> -- drills/d08_mlp_backprop.py` restores the stub.
+Commit each finished stage. To redo a drill from scratch: `git show HEAD~N:drills/d08_mlp_backprop.py > /tmp/mine.py` keeps your version, and `git checkout <first-commit> -- drills/d08_mlp_backprop.py` restores the stub. NumPy drill stubs came in a later commit: `git log --diff-filter=A --format=%h -- numpy_drills/` prints its hash.
