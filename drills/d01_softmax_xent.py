@@ -6,15 +6,15 @@ know about numerical stability.
 import numpy as np
 
 
-def softmax(z: np.ndarray, axis=-1):
+def softmax(z, axis=-1):
     """Numerically stable softmax along `axis`.
 
     z: array of any shape. Returns an array of the same shape whose values
     sum to 1 along `axis`. Must not overflow for z around 1000.
     Hint: softmax(z) == softmax(z - c) for any constant c.
     """
-    e = np.exp(z - z.max(axis, keepdims=True))
-    return e / np.sum(e, axis=axis, keepdims=True)
+    raise NotImplementedError("TODO: softmax")
+
 
 def log_softmax(z, axis=-1):
     """Numerically stable log-softmax along `axis`.
@@ -22,9 +22,7 @@ def log_softmax(z, axis=-1):
     Do NOT compute np.log(softmax(z)): it gives -inf for very negative logits.
     Hint: log-sum-exp trick.
     """
-    # log(S) = z_i - m - log(sum(e^{z_j - m}))
-    m = np.max(z, axis=axis, keepdims=True)
-    return z - m - np.log(np.sum(np.exp(z - m), axis=axis, keepdims=True))
+    raise NotImplementedError("TODO: log_softmax")
 
 
 def cross_entropy(logits, y):
@@ -33,11 +31,8 @@ def cross_entropy(logits, y):
     logits: (N, K) float. y: (N,) int labels in [0, K).
     Returns a Python float. No loops.
     """
-    # loss = -log(p_i)
-    N = logits.shape[0]
-    logp = log_softmax(logits, axis=-1) # shape (N, K)
-    losses = -logp[np.arange(N), y]
-    return float(np.mean(losses))
+    raise NotImplementedError("TODO: cross_entropy")
+
 
 def cross_entropy_grad(logits, y):
     """Gradient of `cross_entropy` with respect to the logits, shape (N, K).
@@ -45,9 +40,4 @@ def cross_entropy_grad(logits, y):
     Derive it on paper first: it is a famously simple expression.
     Do not forget the 1/N from the mean.
     """
-    ## basically, gradient of loss(i) = softmax(z_i) - y_i_one_hot (vector size)
-    ## so we stack them for N inputs
-
-    N, K = logits.shape
-    grad = (softmax(logits, axis=-1) - np.eye(K)[y]) / N # (N, K)
-    return grad
+    raise NotImplementedError("TODO: cross_entropy_grad")
