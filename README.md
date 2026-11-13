@@ -49,7 +49,7 @@ python train.py --epochs 20 --limit 1000    # quick real run; drop --limit for t
 
 ## Interview track: the drills
 
-Rules: set a **timer**, use **no internet and no autocomplete**, and **talk out loud** about shapes and choices. Run the tests only when you think you're done. If you go over time or have to look something up, log it in the cheatsheet's "things I got wrong" table and redo the drill 3–4 days later from a blank file (`git stash` or `git checkout drills/<file>`).
+Rules: set a **timer**, use **no internet and no autocomplete**, and **talk out loud** about shapes and choices. Run the tests only when you think you're done. If you go over time or have to look something up, log it in the cheatsheet's "things I got wrong" table and redo the drill 3–4 days later from a blank file (`git checkout stubs -- drills/<file>`).
 
 | # | Drill | Target | Done | Redo |
 |---|---|---|---|---|
@@ -122,10 +122,15 @@ Do two or three a day as a warm-up before a drill. 20, 22 and 24 are good prepar
 4. Read the docs for the one function you're unsure about.
 5. After about 20 minutes, ask Claude for **a hint**, and say "no code".
 
-## Using git (recommended)
+## Using git
+
+- **`main`** holds the questions only: every function is an unanswered stub. The **`stubs`** tag marks that snapshot.
+- **`answers`** is where you work. Run `git switch answers`, and commit each finished stage or drill there.
 
 ```bash
-git init && git add . && git commit -m "stubs"
+git checkout stubs -- drills/d08_mlp_backprop.py   # restore one stub to redo it (commit your version first)
+git show HEAD:drills/d08_mlp_backprop.py           # your last committed version, for comparison afterwards
+git switch answers && git merge main               # pull newly added questions into your branch
 ```
 
-Commit each finished stage. To redo a drill from scratch: `git show HEAD~N:drills/d08_mlp_backprop.py > /tmp/mine.py` keeps your version, and `git checkout <first-commit> -- drills/d08_mlp_backprop.py` restores the stub. NumPy drill stubs came in a later commit: `git log --diff-filter=A --format=%h -- numpy_drills/` prints its hash.
+New questions go on `main`. After committing them, move the tag with `git tag -f stubs main && git push -f origin stubs`.
