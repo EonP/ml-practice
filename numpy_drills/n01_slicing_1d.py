@@ -12,7 +12,7 @@ def last_k(x, k):
 
     last_k(np.arange(5), 2) -> [3, 4]. Make sure k = 0 gives an empty array.
     """
-    raise NotImplementedError("TODO: last_k")
+    return x[len(x) - k:]
 
 
 def drop_ends(x, k):
@@ -20,13 +20,12 @@ def drop_ends(x, k):
 
     drop_ends(np.arange(6), 1) -> [1, 2, 3, 4]. Make sure k = 0 drops nothing.
     """
-    raise NotImplementedError("TODO: drop_ends")
+    return x[k : len(x) - k]
 
 
 def every_kth(x, k, start=0):
     """x[start], x[start + k], x[start + 2k], ... for as long as they exist."""
-    raise NotImplementedError("TODO: every_kth")
-
+    return x[start::k]
 
 def odd_positions_reversed(x):
     """The elements at odd positions (1, 3, 5, ...), last one first.
@@ -34,4 +33,4 @@ def odd_positions_reversed(x):
     np.arange(7) -> [5, 3, 1] and np.arange(6) -> [5, 3, 1].
     x[::-2] is right for only one of those two lengths.
     """
-    raise NotImplementedError("TODO: odd_positions_reversed")
+    return x[1::2][::-1]
