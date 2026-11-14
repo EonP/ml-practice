@@ -12,12 +12,13 @@ def column(x, j, keepdims=False):
 
     j may be negative. Check j = -1 with keepdims=True.
     """
-    raise NotImplementedError("TODO: column")
+    return x[:, j, None] if keepdims else x[:, j]
 
 
-def interior(x, b=1):
+def interior(x: np.ndarray, b=1):
     """Everything except a border of width b >= 1 on all four sides: (H - 2b, W - 2b)."""
-    raise NotImplementedError("TODO: interior")
+    H, W = x.shape
+    return x[b:H - b, b:W - b]
 
 
 def corners(x):
@@ -25,7 +26,8 @@ def corners(x):
 
     One slicing expression with steps, no index lists. Assume H, W >= 2.
     """
-    raise NotImplementedError("TODO: corners")
+    H, W = x.shape
+    return x[::H-1, ::W-1]
 
 
 def tile(x, i, j, size):
@@ -34,4 +36,4 @@ def tile(x, i, j, size):
     tile(x, 0, 0, s) is the top-left s x s block, tile(x, 0, 1, s) the block to
     its right. Assume the block lies inside x.
     """
-    raise NotImplementedError("TODO: tile")
+    return x[i*size:(i+1)*size, j*size:(j+1)*size]
