@@ -7,28 +7,37 @@ with .any(axis) or .all(axis).
 import numpy as np
 
 
-def drop_nan_rows(x):
+def drop_nan_rows(x: np.ndarray):
     """Remove every row of the (N, D) array x that contains at least one NaN."""
-    raise NotImplementedError("TODO: drop_nan_rows")
+    row_mask = ~np.isnan(x).any(axis=1) # (N,)
+    return x[row_mask] # (N, D) and (N,)
 
 
-def high_variance_columns(x, thresh):
+def high_variance_columns(x: np.ndarray, thresh):
     """Keep only the columns of x (N, D) whose variance is > thresh. Returns (N, D')."""
-    raise NotImplementedError("TODO: high_variance_columns")
+    col_mask = x.var(axis=0) > thresh # (D,)
+    return x[:, col_mask] # (N, D) and (D,)
 
 
-def fill_nan_with_column_mean(x):
+def fill_nan_with_column_mean(x: np.ndarray):
     """A copy of x (N, D) with each NaN replaced by the mean of the non-NaN entries in its column.
 
     Columns that are entirely NaN become 0. Do not modify x, and don't trigger
     any warnings (np.nanmean warns on an all-NaN column, and so does 0 / 0).
     """
-    raise NotImplementedError("TODO: fill_nan_with_column_mean")
+    non_nans = ~np.isnan(x) # (N, D)
+    counts = np.maximum(non_nans.sum(axis=0), 1) # (D,) - the maximum is there in case counts are zero
+    sums = np.nansum(x, axis=0) # (D,)
+    means = sums / counts # (D,)
+    return np.where(non_nans, x, means) # means gets broadcasted to (N, D)
 
 
-def masked_row_mean(x, mask):
+def masked_row_mean(x: np.ndarray, mask: np.ndarray):
     """Mean of each row of x (N, D) over the entries where mask (N, D) is True.
 
     Returns (N,). Rows with no True entries give 0 (and no warnings).
     """
-    raise NotImplementedError("TODO: masked_row_mean")
+    counts = np.maximum(mask.sum(axis=1), 1)
+    sums = np.sum(np.where(mask, x, 0), axis=1)
+    return sums / counts
+
