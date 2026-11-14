@@ -9,17 +9,18 @@ import numpy as np
 
 def last_channel(x):
     """(..., C) -> (...): the last entry along the last axis."""
-    raise NotImplementedError("TODO: last_channel")
+    return x[..., -1]
 
 
-def bgr_to_rgb(x):
+def bgr_to_rgb(x: np.ndarray):
     """(..., 3) -> (..., 3) with the order of the last axis reversed."""
-    raise NotImplementedError("TODO: bgr_to_rgb")
+    return x[..., ::-1]
 
 
 def split_halves(x):
     """(..., 2D) -> a tuple of two (..., D) arrays: the first and second half of the last axis."""
-    raise NotImplementedError("TODO: split_halves")
+    D = x.shape[-1] // 2
+    return (x[..., :D], x[..., D:])
 
 
 def center_crop(x, h, w):
@@ -28,4 +29,6 @@ def center_crop(x, h, w):
     The top offset is (H - h) // 2 and the left offset is (W - w) // 2, so when
     the leftover is odd the extra row/column is cut from the bottom/right.
     """
-    raise NotImplementedError("TODO: center_crop")
+    H, W = x.shape[-2:]
+    top, left = (H - h) // 2, (W - w) // 2
+    return x[..., top:top + h, left:left + w]
