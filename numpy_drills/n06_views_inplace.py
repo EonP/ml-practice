@@ -13,19 +13,22 @@ def crop_view(x, top, left, h, w):
 
     Writing into the result must change x.
     """
-    raise NotImplementedError("TODO: crop_view")
+    return x[top:top + h, left:left + w]
 
 
-def crop_copy(x, top, left, h, w):
+def crop_copy(x: np.ndarray, top, left, h, w):
     """The same window as an independent COPY: writing into the result must leave x alone."""
-    raise NotImplementedError("TODO: crop_copy")
+    return x[top:top + h, left:left + w].copy()
 
 
 def zero_border_(x, b):
     """Set a border of width b >= 1 on all four sides of the 2D array x to 0, in place. Return None."""
-    raise NotImplementedError("TODO: zero_border_")
+    x[:b] = x[-b:] = 0          # top and bottom
+    x[:, :b] = x[:, -b:] = 0    # left and right
+    return
 
 
 def normalize_rows_(x):
     """Divide each row of the float (N, D) array x by the row's sum, in place. Return None."""
-    raise NotImplementedError("TODO: normalize_rows_")
+    x /= x.sum(axis=1, keepdims=True)
+    return
