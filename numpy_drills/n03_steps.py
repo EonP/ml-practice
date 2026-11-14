@@ -8,17 +8,17 @@ import numpy as np
 
 def downsample(img, f):
     """Keep every f-th row and every f-th column, starting at 0: (ceil(H/f), ceil(W/f), C)."""
-    raise NotImplementedError("TODO: downsample")
+    return img[::f, ::f]
 
 
 def flip_lr(img):
     """Mirror left-right, so the last column comes first. Must be a view."""
-    raise NotImplementedError("TODO: flip_lr")
+    return img[:, ::-1]
 
 
 def rot180(img):
     """Rotate by 180 degrees. Must be a view."""
-    raise NotImplementedError("TODO: rot180")
+    return img[::-1, ::-1]
 
 
 def interleave(a, b):
@@ -27,7 +27,10 @@ def interleave(a, b):
     Returns (2N, ...) with that dtype. Allocate the output once, then fill it
     with two strided slice assignments.
     """
-    raise NotImplementedError("TODO: interleave")
+    out = np.zeros((2 * a.shape[0],) + a.shape[1:], dtype=a.dtype)
+    out[::2] = a
+    out[1::2] = b
+    return out
 
 
 def checkerboard(h, w):
@@ -35,4 +38,7 @@ def checkerboard(h, w):
 
     Start from zeros and use two strided slice assignments (no index arithmetic).
     """
-    raise NotImplementedError("TODO: checkerboard")
+    out = np.zeros((h, w), dtype=int)
+    out[::2, 1::2] = 1
+    out[1::2, ::2] = 1
+    return out
