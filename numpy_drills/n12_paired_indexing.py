@@ -9,17 +9,18 @@ import numpy as np
 
 def pick_per_row(x, cols):
     """x (N, D), cols (N,) ints -> (N,) with out[i] = x[i, cols[i]]."""
-    raise NotImplementedError("TODO: pick_per_row")
+    return x[np.arange(x.shape[0]), cols]
 
 
 def set_per_row_(x, cols, value):
     """In place: x[i, cols[i]] = value for every row i. Return None."""
-    raise NotImplementedError("TODO: set_per_row_")
+    x[np.arange(x.shape[0]), cols] = value
+    return
 
 
-def gather_pixels(img, pts):
+def gather_pixels(img, pts: np.ndarray):
     """img (H, W, C), pts (K, 2) ints as (row, col) -> (K, C): the pixel at each point."""
-    raise NotImplementedError("TODO: gather_pixels")
+    return img[pts[:, 0], pts[:, 1]]
 
 
 def swap_rows_(x, i, j):
@@ -27,4 +28,9 @@ def swap_rows_(x, i, j):
 
     The Python idiom x[i], x[j] = x[j], x[i] silently gets this wrong. Why?
     """
-    raise NotImplementedError("TODO: swap_rows_")
+    # Right side: integer-array gather, so a NEW 2-row array holding rows j, i.
+    # Left side: scatter into rows i, j of x itself, which is the in-place write.
+    # (x[i], x[j] = x[j], x[i] fails because x[j], x[i] are views: by the time
+    # x[j] is written, the "row i" it reads from has already been overwritten.)
+    x[[i, j]] = x[[j, i]]
+    return
