@@ -1,10 +1,11 @@
 # ML practice: drills + segmentation project
 
-Three tracks that build the same skills:
+Four tracks that build the same skills:
 
 - **`seg/`**: the project track. Build a segmentation pipeline stage by stage, ending with a U-Net trained on Oxford-IIIT Pet.
 - **`drills/`**: the interview track. Classic "implement it from scratch" questions, done against a timer.
 - **`numpy_drills/`**: the indexing warm-up. 25 short exercises on slicing, views, masks, fancy indexing, scatter, sliding windows and patches, ordered from easy to hard.
+- **`torch_drills/`**: the PyTorch track. 12 drills on the everyday API, from tensors and autograd to training loops, optimisers and fine-tuning.
 
 Every function is a stub with a docstring giving the shapes, the spec and sometimes a hint. Tests check your code against NumPy, SciPy, PyTorch, scikit-learn or torchvision references. **No solutions are included.** If you're stuck, ask for a *hint*, not the code.
 
@@ -25,7 +26,7 @@ Or activate the environment once with `source .venv/bin/activate`, and then drop
 
 Without uv: `python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt pytest`.
 
-All 289 tests fail at the start (`NotImplementedError: TODO`), and that's expected.
+All 405 tests fail at the start (`NotImplementedError: TODO`), and that's expected.
 
 ## Project track: one stage per day
 
@@ -113,6 +114,34 @@ Drill 05 has no code: replace each `None` with a True/False prediction for 40 ex
 | 25 | putting patches back | `fold` with `np.add.at`, max-pool indices, unpooling | 25 min | | |
 
 Do two or three a day as a warm-up before a drill. 20, 22 and 24 are good preparation for drill 10 (conv2d), and 10 and 16 for drill 13 (attention).
+
+## PyTorch track: `torch_drills/`
+
+The everyday PyTorch API, practised until you can write it without looking anything up. The drill rules apply (timer, no internet, no autocomplete). Tests compare your code with PyTorch's own implementations. Wherever a drill asks you to write something by hand, the built-in version is off limits (`F.cross_entropy` in 05, `torch.optim` in 08, `clip_grad_norm_` in 09, ...), and drill 02 also rejects Python loops.
+
+```bash
+uv run pytest tests/torch_drills -q                              # all 116 tests
+uv run pytest tests/torch_drills/test_t07_training_loop.py -q    # one drill
+```
+
+Drill 12 has no code. As in numpy drill 05, replace each `None` with a True/False prediction for 30 statements about PyTorch's behaviour, then let the tests tell you which ones you got wrong.
+
+| # | Drill | Covers | Target | Done | Redo |
+|---|---|---|---|---|---|
+| 01 | tensors | dtype and device, `stack` vs `cat`, `view` vs `reshape`, `permute` + `contiguous`, splitting heads, `squeeze` | 12 min | | |
+| 02 | gather, scatter and friends | `gather`, `scatter_`, `index_add_`, `masked_fill`, `topk` | 12 min | | |
+| 03 | autograd | `autograd.grad`, finite-difference checks, gradient accumulation, straight-through rounding, Hessian-vector products | 15 min | | |
+| 04 | `nn.Module` | registering layers, `nn.Parameter`, LayerNorm by hand, buffers, train vs eval | 15 min | | |
+| 05 | losses | cross-entropy with `ignore_index`, channels-last segmentation logits, stable BCE with `pos_weight`, label smoothing | 15 min | | |
+| 06 | Dataset and DataLoader | custom `Dataset`, padding `collate_fn`, seeded splits, streaming mean/std | 15 min | | |
+| 07 | the training loop | train and eval epochs, overfitting one batch, early stopping that restores the best weights | 20 min | | |
+| 08 | optimisers from scratch | SGD with momentum, Adam, AdamW | 25 min | | |
+| 09 | schedules and clipping | warmup + cosine, `LambdaLR`, global-norm clipping, the order of a training step | 15 min | | |
+| 10 | custom autograd | `autograd.Function`, `gradcheck`, straight-through clamp, gradient reversal | 20 min | | |
+| 11 | init, hooks, fine-tuning | Kaiming init, forward hooks, freezing layers, weight-decay param groups | 15 min | | |
+| 12 | true or false? (quiz) | 30 statements on views, autograd, modules and losses | 10 min | | |
+
+Suggested order alongside the project: 01–04 before `seg/s3` and `s4`, 05–07 before `s6` and `s7`, and 08–11 together with drills 08 and 09. Drill 12 works any time after 07, and again as a refresher before an interview.
 
 ## When you're stuck (in this order)
 
