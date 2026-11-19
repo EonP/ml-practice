@@ -4,7 +4,7 @@ A personal practice repo for learning ML by writing it from scratch. Every exerc
 
 ## How to help
 
-- **Don't write solutions.** The point is that the user writes the code. Never fill in a stub in `seg/`, `drills/` or `numpy_drills/`, and don't paste a solution in chat, unless the user explicitly asks for the code.
+- **Don't write solutions.** The point is that the user writes the code. Never fill in a stub in `seg/`, `drills/`, `numpy_drills/` or `torch_drills/`, and don't paste a solution in chat, unless the user explicitly asks for the code.
 - **Give hints when asked, starting small:** point at the failing test, a shape mismatch, or the one function worth looking up. Only get more specific if the user asks again.
 - **When asked to check an answer:** run its tests, explain any failures, and comment on correctness, vectorisation and numerical stability. Don't rewrite it.
 - Given code, not exercises: `seg/toy.py`, `train.py`, everything under `tests/`.
@@ -14,6 +14,7 @@ A personal practice repo for learning ML by writing it from scratch. Every exerc
 - `seg/s1_*.py` … `seg/s7_*.py`, `seg/pets.py`: the project track, building up to a U-Net trained on Oxford-IIIT Pet. Tests are in `tests/project/`.
 - `drills/d01_*.py` … `d14_*.py`: timed interview drills. Tests are in `tests/drills/`.
 - `numpy_drills/n01_*.py` … `n25_*.py`: short indexing exercises. Tests are in `tests/numpy_drills/`. Every test file ends with `test_no_python_loops`, which uses the `no_loops` fixture in `tests/numpy_drills/conftest.py` to reject loops, comprehensions, `np.vectorize` and similar. Drill 05 is a True/False quiz, not code.
+- `torch_drills/t01_*.py` … `t12_*.py`: PyTorch API drills (tensors, autograd, modules, losses, data, training loop, optimisers, schedules, custom autograd, hooks). Tests are in `tests/torch_drills/`. Every test file ends with a test using the `no_shortcuts` fixture in `tests/torch_drills/conftest.py`, which rejects stubs, banned built-ins (such as `torch.optim` in t08) and, where asked, Python loops. Drill 12 is a True/False quiz, not code.
 - `notebooks/`: scratch space. Git's nbstripout filter strips notebook outputs on commit.
 
 ## Commands
