@@ -12,35 +12,48 @@ Slices, boolean masks and x[rows, cols] work just as in NumPy. The torch-specifi
 import torch
 
 
-def pick_target_logits(logits, y):
+def pick_target_logits(logits: torch.Tensor, y):
     """logits (N, K), y (N,) long -> (N,) with out[i] = logits[i, y[i]]. Use gather."""
-    raise NotImplementedError("TODO: pick_target_logits")
+    return logits[torch.arange(logits.shape[0]), y]
+    # return torch.gather(logits, 1, y[:, None]).squeeze(-1)
 
 
-def pixel_target_logits(logits, target):
+def pixel_target_logits(logits: torch.Tensor, target):
     """logits (N, K, H, W), target (N, H, W) long -> (N, H, W): at every pixel, the logit
     of that pixel's target class."""
-    raise NotImplementedError("TODO: pixel_target_logits")
+    return torch.gather(logits, 1, target[:, None]).squeeze(1)
 
 
 def one_hot(y, K):
     """y long of any shape -> float32 tensor of shape y.shape + (K,).
     Use scatter_, not F.one_hot or torch.eye."""
-    raise NotImplementedError("TODO: one_hot")
-
+    # return torch.eye(K)[y]
+    out = torch.zeros(*y.shape, K, device=y.device)
+    out.scatter_(-1, y[..., None], 1.0)
+    return out
 
 def causal_fill(scores):
     """scores (..., L, L) -> a copy with every entry ABOVE the diagonal (key j > query i)
     set to -inf, so a softmax over the last axis ignores the future."""
-    raise NotImplementedError("TODO: causal_fill")
-
+    L = scores.shape[-1]
+    i = torch.arange(L, device=scores.device)
+    mask = i[None, :] > i[:, None]
+    return torch.where(mask, float("-inf"), scores)
 
 def segment_sum(values, segment_ids, n_segments):
     """values (N, D), segment_ids (N,) long in [0, n_segments) -> (n_segments, D), where
     row s is the sum of the rows of values whose id is s (zeros if there are none)."""
-    raise NotImplementedError("TODO: segment_sum")
+    _, D = values.shape
+    out = torch.zeros((n_segments, D), dtype=values.dtype, device=values.device)
+    out.index_add_(0, segment_ids, values)
+    return out
 
 
-def topk_mask(x, k):
+def topk_mask(x: torch.Tensor, k):
     """x (N, D) -> bool (N, D), True at the k largest entries of each row. k may be 0."""
-    raise NotImplementedError("TODO: topk_mask")
+    mask = torch.zeros_like(x, dtype=torch.bool, device=x.device)
+    indices = x.topk(k, dim=1).indices # (N, k)
+    mask.scatter_(1, indices, True)
+    return mask
+
+
