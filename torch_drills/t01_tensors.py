@@ -13,17 +13,17 @@ import torch
 
 def like(x, data):
     """A new tensor holding `data` (nested lists or a NumPy array), with x's dtype and device."""
-    raise NotImplementedError("TODO: like")
+    return torch.tensor(data, dtype=x.dtype, device=x.device)
 
 
 def batch_images(images):
     """List of N tensors, each (C, H, W) -> one batch (N, C, H, W)."""
-    raise NotImplementedError("TODO: batch_images")
+    return torch.stack(images)
 
 
 def concat_sequences(seqs):
     """List of tensors (L_i, D) with different lengths L_i -> one tensor (sum of the L_i, D)."""
-    raise NotImplementedError("TODO: concat_sequences")
+    return torch.cat(seqs, dim=0)
 
 
 def flatten_features(x):
@@ -31,28 +31,30 @@ def flatten_features(x):
 
     Return a view when x is contiguous, and still work when it isn't.
     """
-    raise NotImplementedError("TODO: flatten_features")
+    return torch.flatten(x, start_dim=1)
 
 
 def to_channels_last(x):
     """(N, C, H, W) -> (N, H, W, C), returned as a contiguous tensor."""
-    raise NotImplementedError("TODO: to_channels_last")
+    return torch.permute(x, (0, 2, 3, 1)).contiguous()
 
 
-def split_heads(x, n_heads):
+def split_heads(x: torch.Tensor, n_heads):
     """(B, L, D) -> (B, n_heads, L, D // n_heads). Head h gets features h * dh to (h + 1) * dh - 1."""
-    raise NotImplementedError("TODO: split_heads")
+    B, L, D = x.shape
+    y = x.view(B, L, n_heads, D // n_heads)
+    return y.transpose(1, 2)
 
-
-def merge_heads(x):
+def merge_heads(x: torch.Tensor):
     """Inverse of split_heads: (B, n_heads, L, dh) -> (B, L, n_heads * dh).
 
     x may be any tensor of that shape (e.g. the output of attention), not only a view
     straight out of split_heads.
     """
-    raise NotImplementedError("TODO: merge_heads")
+    B, n_heads, L, dh = x.shape
+    return x.transpose(1, 2).reshape(B, L, n_heads * dh)
 
 
 def squeeze_last(x):
     """(N, 1) -> (N,). The result must keep the batch axis when N == 1."""
-    raise NotImplementedError("TODO: squeeze_last")
+    return x.squeeze(dim=-1)
