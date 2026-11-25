@@ -42,7 +42,7 @@ def to_channels_last(x):
 def split_heads(x: torch.Tensor, n_heads):
     """(B, L, D) -> (B, n_heads, L, D // n_heads). Head h gets features h * dh to (h + 1) * dh - 1."""
     B, L, D = x.shape
-    y = x.view(B, L, n_heads, D // n_heads)
+    y = x.reshape(B, L, n_heads, D // n_heads)
     return y.transpose(1, 2)
 
 def merge_heads(x: torch.Tensor):
